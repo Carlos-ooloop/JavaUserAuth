@@ -29,10 +29,10 @@ public class RegisterUserCase {
 
         String encodedPassword = passwordEncoder.encode(command.password());
 
-        User user = new User(null, command.email(),encodedPassword, Role.USER, true, LocalDateTime.now());
+        User user = new User(null, command.username(), command.email(),encodedPassword, Role.USER, true, LocalDateTime.now());
 
         User saveduser = userRepository.save(user);
 
-        return new RegisterUserResponse(saveduser.getId(), saveduser.getEmail(), saveduser.getRole().name());
+        return new RegisterUserResponse(saveduser.getId(), saveduser.getUsername(), saveduser.getEmail(), saveduser.getRole().name());
     }
 }

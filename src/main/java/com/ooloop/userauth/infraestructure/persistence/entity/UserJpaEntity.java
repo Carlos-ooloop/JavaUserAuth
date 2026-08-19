@@ -3,7 +3,7 @@ package com.ooloop.userauth.infraestructure.persistence.entity;
 import com.ooloop.userauth.domain.model.Role;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,6 +12,11 @@ public class UserJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -80,8 +85,13 @@ public class UserJpaEntity {
         this.createdAt = createdAt;
     }
 
-    public UserJpaEntity(Long id, String email, String password, boolean enabled, Role role, LocalDateTime createdAt) {
+    public String getUsername() {
+        return username;
+    }
+
+    public UserJpaEntity(Long id, String email, String password, boolean enabled, Role role, LocalDateTime createdAt, String username) {
         this.id = id;
+        this.username = username;
         this.email = email;
         this.password = password;
         this.enabled = enabled;
