@@ -20,19 +20,21 @@ public class RegisterUserCase {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public RegisterUserResponse execute(RegisterUserCommand command){
-
-        if(userRepository.existsByEmail(command.email())){
-
+    public RegisterUserResponse execute(RegisterUserCommand command) {
+        if (userRepository.existsByEmail(command.email())) {
             throw new UserAlreadyExistsException(command.email());
+        }
+
+        if (userRepository.existsByUsername(command.username())) {
+            throw new UserAlreadyExistsException(command.username());
         }
 
         String encodedPassword = passwordEncoder.encode(command.password());
 
-        User user = new User(null, command.username(), command.email(),encodedPassword, Role.USER, true, LocalDateTime.now());
+        User user = new User(null, command.username(), command.email(), encodedPassword, Role.USER, true, LocalDateTime.now(), null);
 
-        User saveduser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        return new RegisterUserResponse(saveduser.getId(), saveduser.getUsername(), saveduser.getEmail(), saveduser.getRole().name());
+        return new RegisterUserResponse(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail(), savedUser.getRole().name());
     }
 }

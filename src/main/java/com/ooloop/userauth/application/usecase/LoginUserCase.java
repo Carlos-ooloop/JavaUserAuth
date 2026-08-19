@@ -7,9 +7,6 @@ import com.ooloop.userauth.domain.model.User;
 import com.ooloop.userauth.domain.port.PasswordEncoder;
 import com.ooloop.userauth.domain.port.TokenGenerator;
 import com.ooloop.userauth.domain.port.UserRepository;
-import org.springframework.stereotype.Service;
-
-@Service
 public class LoginUserCase {
 
 

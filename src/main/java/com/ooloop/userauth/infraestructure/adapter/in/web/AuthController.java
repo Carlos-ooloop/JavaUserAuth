@@ -7,10 +7,8 @@ import com.ooloop.userauth.application.dto.RegisterUserResponse;
 import com.ooloop.userauth.application.usecase.LoginUserCase;
 import com.ooloop.userauth.application.usecase.RegisterUserCase;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,27 +25,14 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public RegisterUserResponse register(@RequestBody RegisterUserCommand command){
-
+    public RegisterUserResponse register(@Valid @RequestBody RegisterUserCommand command) {
         return registerUserCase.execute(command);
     }
+
     @PostMapping("/login")
-    public ResponseEntity<LoginResultCommand> login(@Valid @RequestBody LoginCommand loginCommand){
-
-        LoginResultCommand resultCommand = loginUserCase.execute(new LoginCommand(loginCommand.username(),loginCommand.password()));
-
-        return ResponseEntity.ok(new LoginResultCommand(resultCommand.token()));
-
-
-        }
-
-        @GetMapping("/me")
-        public ResponseEntity<String> me(Authentication authentication) {
-
-        return ResponseEntity.ok(authentication.getName());
-
-        }
-
-
+    public ResponseEntity<LoginResultCommand> login(@Valid @RequestBody LoginCommand loginCommand) {
+        LoginResultCommand result = loginUserCase.execute(
+                new LoginCommand(loginCommand.username(), loginCommand.password()));
+        return ResponseEntity.ok(result);
     }
-
+}

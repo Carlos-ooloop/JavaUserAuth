@@ -7,6 +7,8 @@ import com.ooloop.userauth.infraestructure.persistence.mappers.UserPersistenceMa
 import com.ooloop.userauth.infraestructure.persistence.repository.UserJpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,21 +16,15 @@ public class UserRepositoryAdapter implements UserRepository {
 
     private final UserJpaRepository repository;
 
-
     public UserRepositoryAdapter(UserJpaRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public User save (User user){
+    public User save(User user) {
         UserJpaEntity entity = UserPersistenceMapper.toEntity(user);
-
         UserJpaEntity saved = repository.save(entity);
-
-
-        return UserPersistenceMapper.toDomain(repository.save(entity));
-
-
+        return UserPersistenceMapper.toDomain(saved);
     }
 
     @Override
@@ -37,20 +33,37 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return repository.findByUsername(username).map(UserPersistenceMapper::toDomain);
+    }
+
+    @Override
     public Optional<User> findByID(Long id) {
-        return repository.findById(id).map(UserPersistenceMapper::toDomain);
+        return repository.findActiveById(id).map(UserPersistenceMapper::toDomain);
     }
 
     @Override
     public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
     }
+
     @Override
-    public Optional<User> findByUsername(String username) {
-        return repository.findByUsername(username).map(UserPersistenceMapper::toDomain);
+    public boolean existsByUsername(String username) {
+        return repository.existsByUsername(username);
     }
 
+    @Override
+    public List<User> findAllActive() {
+        return repository.findAllActive().stream()
+                .map(UserPersistenceMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public void softDelete(Long id) {
+        repository.findById(id).ifPresent(entity -> {
+            entity.setDeletedAt(LocalDateTime.now());
+            repository.save(entity);
+        });
+    }
 }
-
-
-

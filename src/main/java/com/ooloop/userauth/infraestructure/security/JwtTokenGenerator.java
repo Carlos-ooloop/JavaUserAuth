@@ -1,6 +1,7 @@
 package com.ooloop.userauth.infraestructure.security;
 
 import com.ooloop.userauth.domain.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,33 +14,40 @@ import java.util.Date;
 @Component
 public class JwtTokenGenerator {
 
+    private static final String ROLE_CLAIM = "role";
+
     private final SecretKey secretKey;
     private final long expiration;
 
-
-    public JwtTokenGenerator(SecretKey secretKey, long expiration) {
-        this.secretKey = secretKey;
-        this.expiration = expiration;
-    }
-    public JwtTokenGenerator (@Value("${jwt.secret}")String secret, @Value("${jwt.expiration}")long expiration){
-
+    public JwtTokenGenerator(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") long expiration) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expiration = expiration;
-
     }
 
-    public String generate(User user){
-
+    public String generate(User user) {
         Date now = new Date();
-
-        return Jwts.builder().subject(user.getUsername()).issuedAt(now).expiration(new Date(now.getTime()+ expiration)).signWith(secretKey).compact();
-
+        return Jwts.builder()
+                .subject(user.getUsername())
+                .claim(ROLE_CLAIM, user.getRole().name())
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + expiration))
+                .signWith(secretKey)
+                .compact();
     }
 
     public String extractSubject(String token) {
+        return parseClaims(token).getSubject();
+    }
 
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getSubject();
+    public String extractRole(String token) {
+        return parseClaims(token).get(ROLE_CLAIM, String.class);
+    }
 
-
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
