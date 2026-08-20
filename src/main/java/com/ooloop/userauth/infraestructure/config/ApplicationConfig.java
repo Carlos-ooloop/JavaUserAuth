@@ -2,6 +2,7 @@ package com.ooloop.userauth.infraestructure.config;
 
 import com.ooloop.userauth.application.usecase.*;
 import com.ooloop.userauth.domain.port.PasswordEncoder;
+import com.ooloop.userauth.domain.port.TokenGenerator;
 import com.ooloop.userauth.domain.port.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public LoginUserCase loginUserCase(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                                        com.ooloop.userauth.domain.port.TokenGenerator tokenGenerator) {
+    public LoginUserCase loginUserCase(UserRepository userRepository, PasswordEncoder passwordEncoder,TokenGenerator tokenGenerator) {
         return new LoginUserCase(userRepository, passwordEncoder, tokenGenerator);
     }
 

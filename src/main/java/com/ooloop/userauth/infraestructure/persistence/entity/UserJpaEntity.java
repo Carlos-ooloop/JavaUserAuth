@@ -29,10 +29,10 @@ public class UserJpaEntity {
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
+    @Column(name = "created_at",nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = true)
+    @Column(name = "deleted_at",nullable = true)
     private LocalDateTime deletedAt;
 
     protected UserJpaEntity() {}

@@ -1,6 +1,7 @@
 package com.ooloop.userauth.infraestructure.security;
 
 import com.ooloop.userauth.domain.model.User;
+import com.ooloop.userauth.domain.port.TokenGenerator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
-public class JwtTokenGenerator {
+public class JwtTokenGenerator implements TokenGenerator {
 
     private static final String ROLE_CLAIM = "role";
 
